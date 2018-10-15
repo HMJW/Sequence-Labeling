@@ -1,10 +1,21 @@
+import collections
+from itertools import chain
+
 import torch
 import torch.nn.init as init
 
 
 class Vocab(object):
-    def __init__(self, words, labels, chars):
-        'ensure the <PAD> index is 0'
+    def collect(self, corpus, min_freq=1):
+        labels = sorted(set(chain(*corpus.label_seqs)))
+        words = collections.Counter(chain(*corpus.word_seqs))
+        words = [w for w,f in words.items() if f > min_freq]
+        chars = sorted(set(''.join(words)))
+        return words, chars, labels
+
+    def __init__(self, corpus, min_freq=1):
+        words, chars, labels = self.collect(corpus, min_freq)
+        #  ensure the <PAD> index is 0
         self.UNK = '<UNK>'
         self.PAD = '<PAD>'
 
