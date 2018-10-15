@@ -73,7 +73,7 @@ if __name__ == '__main__':
     
     # collect all words, characters and labels in trainning data
     # remove words whose frequency <= 1
-    vocab = collect(train, low_freq=1)
+    vocab = Vocab(train, min_freq=1)
 
     # choose if use pretrained word embedding
     if args.pre_emb and config.embedding_file !=None:

@@ -10,6 +10,3 @@ def load_pkl(filename):
     with open(filename, 'rb') as f:
         obj = pickle.load(f)
     return obj
-
-
-
