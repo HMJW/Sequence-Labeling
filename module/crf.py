@@ -77,6 +77,9 @@ class CRFlayer(torch.nn.Module):
 
     def forward(self, emit, labels, mask):
         '''
+        emit: emission (unigram) scores of sentences in batch, [sen_len, batch_size, labels_num]
+        mask: masks of sentences in batch, [sen_lens, batch_size]
+        labels: target of sentences, [sen_lens, batch_size]
         return: sum(logZ-score)/batch_size
         '''
         logZ = self.get_logZ(emit, mask)
