@@ -145,9 +145,10 @@ class Evaluator(object):
     def eval(self, network, data_loader):
         network.eval()
         total_loss = 0.0
-
+        total_num = 0
         for batch in data_loader:
             batch_size = batch[0].size(0)
+            total_num += batch_size
             # mask = torch.arange(y.size(1)) < lens.unsqueeze(-1)
             # mask = word_idxs.gt(0)
             mask, out, targets = network.forward_batch(batch)
@@ -179,10 +180,10 @@ class Evaluator(object):
         if self.task == 'pos':
             precision = self.correct_num/self.pred_num
             self.clear_num()
-            return total_loss, precision
+            return total_loss/total_num, precision
         elif self.task == 'chunking' or self.task == 'ner':
             precision = self.correct_num/self.pred_num
             recall = self.correct_num/self.gold_num
             Fscore = (2*precision*recall)/(precision+recall)
             self.clear_num()
-            return total_loss, precision, recall, Fscore
+            return total_loss/total_num, precision, recall, Fscore

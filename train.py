@@ -8,22 +8,18 @@ from model import Char_LSTM_CRF
 from utils import *
 
 
-def process_data(vocab, dataset, max_word_len=30, use_cuda=False):
+def process_data(vocab, dataset, lower=False, max_word_len=30):
     word_idxs, char_idxs, label_idxs = [], [], []
 
     for wordseq, labelseq in zip(dataset.word_seqs, dataset.label_seqs):
-        _word_idxs = vocab.word2id(wordseq)
+        _word_idxs = vocab.word2id(wordseq, lower)
         _label_idxs = vocab.label2id(labelseq)
+        # ensure the char not to be all lowered
         _char_idxs = vocab.char2id(wordseq, max_word_len)
 
-        if not use_cuda:
-            word_idxs.append(torch.tensor(_word_idxs))
-            char_idxs.append(torch.tensor(_char_idxs))
-            label_idxs.append(torch.tensor(_label_idxs))
-        else:
-            word_idxs.append(torch.tensor(_word_idxs).cuda())
-            char_idxs.append(torch.tensor(_char_idxs).cuda())
-            label_idxs.append(torch.tensor(_label_idxs).cuda())
+        word_idxs.append(torch.tensor(_word_idxs))
+        char_idxs.append(torch.tensor(_char_idxs))
+        label_idxs.append(torch.tensor(_label_idxs))
 
     return TensorDataSet(word_idxs, char_idxs, label_idxs)
 
@@ -41,6 +37,7 @@ if __name__ == '__main__':
     parser.add_argument('--task', choices=['pos', 'chunking', 'ner'], default='chunking', help='task choice')
     parser.add_argument('--seed', type=int, default=10, help='random seed')
     parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
+    parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
     args = parser.parse_args()
     print('setting:')
     print(args)
@@ -64,13 +61,13 @@ if __name__ == '__main__':
 
     # read training , dev and test file
     print('loading three datasets...')
-    train = Corpus(config.train_file[args.task], lower=False, ignore_docstart=True)
-    dev = Corpus(config.dev_file[args.task], lower=False, ignore_docstart=True)
-    test = Corpus(config.test_file[args.task], lower=False, ignore_docstart=True)
+    train = Corpus(config.train_file[args.task], ignore_docstart=True)
+    dev = Corpus(config.dev_file[args.task], ignore_docstart=True)
+    test = Corpus(config.test_file[args.task], ignore_docstart=True)
 
     # collect all words, characters and labels in trainning data
     # remove words whose frequency <= 1
-    vocab = Vocab(train, min_freq=1)
+    vocab = Vocab(train, lower=args.lower, min_freq=1)
 
     # choose if use pretrained word embedding
     if args.pre_emb and config.embedding_file !=None:
@@ -82,9 +79,9 @@ if __name__ == '__main__':
 
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, max_word_len=30, use_cuda=False)
-    dev_data = process_data(vocab, dev, max_word_len=30, use_cuda=False)
-    test_data = process_data(vocab, test, max_word_len=30, use_cuda=False)
+    train_data = process_data(vocab, train, lower=args.lower, max_word_len=30)
+    dev_data = process_data(vocab, dev, lower=args.lower, max_word_len=30)
+    test_data = process_data(vocab, test, lower=args.lower, max_word_len=30)
 
     train_loader = Data.DataLoader(
         dataset=train_data,

@@ -8,13 +8,21 @@ import torch.nn.init as init
 class Vocab(object):
     def collect(self, corpus, min_freq=1):
         labels = sorted(set(chain(*corpus.label_seqs)))
-        words = collections.Counter(chain(*corpus.word_seqs))
-        words = [w for w,f in words.items() if f > min_freq]
-        chars = sorted(set(''.join(words)))
+        words = list(chain(*corpus.word_seqs))
+        
+        chars_freq = collections.Counter(''.join(words))
+        chars = [c for c,f in chars_freq.items() if f > min_freq]
+        words_freq = collections.Counter(words)
+        words = [w for w,f in words_freq.items() if f> min_freq]
+       
         return words, chars, labels
 
-    def __init__(self, corpus, min_freq=1):
+    def __init__(self, corpus, lower=False, min_freq=1):
         words, chars, labels = self.collect(corpus, min_freq)
+
+        #  if lower=True,lower all the words.But not all Chars
+        if lower:
+            words = [w.lower() for w in words]
         #  ensure the <PAD> index is 0
         self.UNK = '<UNK>'
         self.PAD = '<PAD>'
@@ -36,8 +44,8 @@ class Vocab(object):
         self.PAD_word_index = self._word2id[self.PAD]
         self.PAD_char_index = self._char2id[self.PAD]
 
-    def read_embedding(self, embedding_file):
-        'ensure the <PAD> index is 0'
+    def read_embedding(self, embedding_file, unk_in_pretrain='unk'):
+        #  ensure the <PAD> index is 0
         with open(embedding_file, 'r') as f:
             lines = f.readlines()
         splits = [line.split() for line in lines]
@@ -47,13 +55,14 @@ class Vocab(object):
         ])
 
         pretrained = {w: torch.tensor(v) for w, v in zip(words, vectors)}
-        unk_words = [w for w in words if w not in self._word2id]
-        unk_chars = [c for c in ''.join(unk_words) if c not in self._char2id]
+        out_train_words = [w for w in words if w not in self._word2id]
+        out_train_chars = [c for c in ''.join(out_train_words) if c not in self._char2id]
+        unk_vector = pretrained[unk_in_pretrain]
 
         # extend words and chars
         # ensure the <PAD> token at the first position
-        self._words =[self.PAD] + sorted(set(self._words + unk_words) - {self.PAD})
-        self._chars =[self.PAD] + sorted(set(self._chars + unk_chars) - {self.PAD})
+        self._words =[self.PAD] + sorted(set(self._words + out_train_words) - {self.PAD} - {unk_in_pretrain})
+        self._chars =[self.PAD] + sorted(set(self._chars + out_train_chars) - {self.PAD})
 
         # update the words,chars dictionary
         self._word2id = {w: i for i, w in enumerate(self._words)}
@@ -69,14 +78,13 @@ class Vocab(object):
 
         # initial the extended embedding table
         embdim = len(vectors[0])
-        
         extended_embed = torch.randn(self.num_words, embdim)
         bias = (3.0 / embdim) ** 0.5
         init.uniform_(extended_embed, -bias, bias)
-
-        # different from chinese POS
+        
         # the word in pretrained file use pretrained vector
         # the word not in pretrained file but in training data use random initialized vector
+        extended_embed[self.UNK_word_index] = unk_vector
         for i, w in enumerate(self._words):
             if w in pretrained:
                 extended_embed[i] = pretrained[w]
@@ -84,8 +92,7 @@ class Vocab(object):
                 extended_embed[i] = pretrained[w.lower()]
         return extended_embed
 
-    def word2id(self, word):
-        'different from Chinese POS'
+    def word2id(self, word, lower=False):
         def f(x):
             if x in self._word2id:
                 return self._word2id[x]
@@ -93,12 +100,17 @@ class Vocab(object):
                 return self._word2id[x.lower()]
             else:
                 return self._word2id[self.UNK]
-
         assert (isinstance(word, str) or isinstance(word, list))
         if isinstance(word, str):
-            return f(word)
+            if lower:
+                return self._word2id.get(word.lower(), self.UNK_word_index)
+            else:
+                return f(word)
         elif isinstance(word, list):
-            return [f(w) for w in word]
+            if lower:
+                return [self._word2id.get(w.lower(), self.UNK_word_index) for w in word]
+            else:
+                return [f(w) for w in word]
 
     def label2id(self, label):
         assert (isinstance(label, str) or isinstance(label, list))

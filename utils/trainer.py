@@ -29,11 +29,7 @@ class Trainer(object):
         test_precision = 0
         max_epoch = 0
         patience = 0
-
         train_loader, dev_loader, test_loader = data_loaders
-        train_num = len(train_loader.dataset)
-        dev_num = len(dev_loader.dataset)
-        test_num = len(test_loader.dataset)
 
         # begin to train
         print('start to train the model ')
@@ -57,26 +53,26 @@ class Trainer(object):
 
             with torch.no_grad():
                 if evaluator.task == 'chunking' or evaluator.task == 'ner':
-                    train_total_loss, train_p, train_r, train_F = evaluator.eval(self.network, train_loader)
+                    train_loss, train_p, train_r, train_F = evaluator.eval(self.network, train_loader)
                     print('train : loss = %.4f  precision = %.4f  recall = %.4f  F = %.4f' %
-                        (train_total_loss/train_num, train_p, train_r, train_F))
+                        (train_loss, train_p, train_r, train_F))
 
-                    dev_total_loss, dev_p, dev_r, dev_F = evaluator.eval(self.network, dev_loader)
+                    dev_loss, dev_p, dev_r, dev_F = evaluator.eval(self.network, dev_loader)
                     print('dev   : loss = %.4f  precision = %.4f  recall = %.4f  F = %.4f' %
-                            (dev_total_loss/dev_num, dev_p, dev_r, dev_F))
+                            (dev_loss, dev_p, dev_r, dev_F))
 
-                    test_total_loss, test_p, test_r, test_F = evaluator.eval(self.network, test_loader)
+                    test_loss, test_p, test_r, test_F = evaluator.eval(self.network, test_loader)
                     print('test  : loss = %.4f  precision = %.4f  recall = %.4f  F = %.4f' %
-                            (test_total_loss/test_num, test_p, test_r, test_F))
+                            (test_loss, test_p, test_r, test_F))
                 elif evaluator.task == 'pos':
-                    train_total_loss, train_p = evaluator.eval(self.network, train_loader)
-                    print('train : loss = %.4f  precision = %.4f' % (train_total_loss/train_num, train_p))
+                    train_loss, train_p = evaluator.eval(self.network, train_loader)
+                    print('train : loss = %.4f  precision = %.4f' % (train_loss, train_p))
 
-                    dev_total_loss, dev_p = evaluator.eval(self.network, dev_loader)
-                    print('dev   : loss = %.4f  precision = %.4f' % (dev_total_loss/dev_num, dev_p))
+                    dev_loss, dev_p = evaluator.eval(self.network, dev_loader)
+                    print('dev   : loss = %.4f  precision = %.4f' % (dev_loss, dev_p))
 
-                    test_total_loss, test_p = evaluator.eval(self.network, test_loader)
-                    print('test  : loss = %.4f  precision = %.4f' % (test_total_loss/test_num, test_p))
+                    test_loss, test_p = evaluator.eval(self.network, test_loader)
+                    print('test  : loss = %.4f  precision = %.4f' % (test_loss, test_p))
                 
             # save the model when dev precision get better
             if evaluator.task == 'chunking' or evaluator.task == 'ner':

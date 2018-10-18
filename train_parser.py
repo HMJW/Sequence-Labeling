@@ -8,25 +8,19 @@ from model import Parser_Char_LSTM_CRF
 from utils import *
 
 
-def process_data(vocab, dataset, parser, parser_layers=3, max_word_len=20, use_cuda=False):
+def process_data(vocab, dataset, parser, parser_layers=3, lower=False, max_word_len=20):
     assert (0<parser_layers<=3)
     word_idxs, char_idxs, parsers, label_idxs = [], [], [], []
 
     for wordseq, labelseq, p in zip(dataset.word_seqs, dataset.label_seqs, parser):
-        _word_idxs = vocab.word2id(wordseq)
+        _word_idxs = vocab.word2id(wordseq, lower)
         _label_idxs = vocab.label2id(labelseq)
         _char_idxs = vocab.char2id(wordseq, max_word_len)
 
-        if not use_cuda:
-            word_idxs.append(torch.tensor(_word_idxs))
-            char_idxs.append(torch.tensor(_char_idxs))
-            label_idxs.append(torch.tensor(_label_idxs))
-            parsers.append(torch.tensor(p, dtype=torch.float)[:,:parser_layers])
-        else:
-            word_idxs.append(torch.tensor(_word_idxs).cuda())
-            char_idxs.append(torch.tensor(_char_idxs).cuda())
-            label_idxs.append(torch.tensor(_label_idxs).cuda())
-            parsers.append(torch.tensor(p, dtype=torch.float)[:,:parser_layers].cuda())
+        word_idxs.append(torch.tensor(_word_idxs))
+        char_idxs.append(torch.tensor(_char_idxs))
+        label_idxs.append(torch.tensor(_label_idxs))
+        parsers.append(torch.tensor(p, dtype=torch.float)[:,:parser_layers])
 
     return TensorDataSet(word_idxs, char_idxs, parsers, label_idxs)
 
@@ -44,6 +38,7 @@ if __name__ == '__main__':
     parser.add_argument('--task', choices=['pos', 'chunking', 'ner'], default='chunking', help='task choice')
     parser.add_argument('--seed', type=int, default=10, help='random seed')
     parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
+    parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
     args = parser.parse_args()
     print('setting:')
     print(args)
@@ -67,9 +62,9 @@ if __name__ == '__main__':
 
     # read training , dev and test file
     print('loading three datasets...')
-    train = Corpus(config.train_file[args.task], lower=False, ignore_docstart=False)
-    dev = Corpus(config.dev_file[args.task], lower=False, ignore_docstart=False)
-    test = Corpus(config.test_file[args.task], lower=False, ignore_docstart=False)
+    train = Corpus(config.train_file[args.task], ignore_docstart=False)
+    dev = Corpus(config.dev_file[args.task], ignore_docstart=False)
+    test = Corpus(config.test_file[args.task], ignore_docstart=False)
     
     # collect all words, characters and labels in trainning data
     # remove words whose frequency <= 1
@@ -88,12 +83,12 @@ if __name__ == '__main__':
     train_parser = load_pkl(config.train_parser[args.task])
     dev_parser = load_pkl(config.dev_parser[args.task])
     test_parser = load_pkl(config.test_parser[args.task])
-
+    print(len(train_parser),len(dev_parser),len(test_parser))
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, train_parser, config.parser_layers, max_word_len=20, use_cuda=False)
-    dev_data = process_data(vocab, dev, dev_parser, config.parser_layers, max_word_len=20, use_cuda=False)
-    test_data = process_data(vocab, test, test_parser, config.parser_layers, max_word_len=20, use_cuda=False)
+    train_data = process_data(vocab, train, train_parser, config.parser_layers, lower=args.lower, max_word_len=20)
+    dev_data = process_data(vocab, dev, dev_parser, config.parser_layers, lower=args.lower, max_word_len=20)
+    test_data = process_data(vocab, test, test_parser, config.parser_layers, lower=args.lower, max_word_len=20)
 
     train_loader = Data.DataLoader(
         dataset=train_data,

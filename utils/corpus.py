@@ -1,5 +1,5 @@
 class Corpus(object):
-    def __init__(self, filename=None, lower=False, ignore_docstart=False):
+    def __init__(self, filename=None, ignore_docstart=False):
         self.filename = filename
         self.sentence_num = 0
         self.word_num = 0
@@ -25,10 +25,7 @@ class Corpus(object):
                     sequence = []
                 else:
                     conll = line.split()                    
-                    if lower:
-                        sentence.append(conll[0].lower())
-                    else:
-                        sentence.append(conll[0])
+                    sentence.append(conll[0])
                     sequence.append(conll[1])
                     self.word_num += 1
         print('%s : sentences:%d，words:%d' % (filename, self.sentence_num, self.word_num))
