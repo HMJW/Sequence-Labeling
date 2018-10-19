@@ -54,19 +54,18 @@ class Vocab(object):
             (split[0], list(map(float, split[1:]))) for split in splits
         ])
 
+        if isinstance(unk_in_pretrain, str):
+            assert unk_in_pretrain in words
+            words = list(words)
+            words[words.index(unk_in_pretrain)] = self.UNK
+
         pretrained = {w: torch.tensor(v) for w, v in zip(words, vectors)}
         out_train_words = [w for w in words if w not in self._word2id]
         out_train_chars = [c for c in ''.join(out_train_words) if c not in self._char2id]
 
-
         # extend words and chars
         # ensure the <PAD> token at the first position
-        if isinstance(unk_in_pretrain, str):
-            assert unk_in_pretrain in pretrained
-            unk_vector = pretrained[unk_in_pretrain]
-            self._words =[self.PAD] + sorted(set(self._words + out_train_words) - {self.PAD} - {unk_in_pretrain})
-        else:
-            self._words =[self.PAD] + sorted(set(self._words + out_train_words) - {self.PAD})
+        self._words =[self.PAD] + sorted(set(self._words + out_train_words) - {self.PAD})
         self._chars =[self.PAD] + sorted(set(self._chars + out_train_chars) - {self.PAD})
 
         # update the words,chars dictionary
@@ -89,8 +88,6 @@ class Vocab(object):
         
         # the word in pretrained file use pretrained vector
         # the word not in pretrained file but in training data use random initialized vector
-        if isinstance(unk_in_pretrain, str):
-            extended_embed[self.UNK_word_index] = unk_vector
         for i, w in enumerate(self._words):
             if w in pretrained:
                 extended_embed[i] = pretrained[w]

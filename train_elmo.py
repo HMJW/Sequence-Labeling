@@ -53,6 +53,7 @@ if __name__ == '__main__':
     print()
 
     # choose GPU and init seed
+    assert args.gpu in range(-1, 7)
     if args.gpu >= 0:
         use_cuda = True
         torch.cuda.set_device(args.gpu)
