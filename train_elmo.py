@@ -9,7 +9,7 @@ from model import Elmo_LSTM_CRF
 from utils import *
 
 
-def process_data(vocab, dataset, elmo, lower=False, max_word_len=30):
+def process_data(vocab, dataset, elmo, lower=False):
     word_idxs, elmos, label_idxs= [], [], []
 
     for wordseq, labelseq, e in zip(dataset.word_seqs, dataset.label_seqs, elmo):
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     print()
 
     # choose GPU and init seed
-    assert args.gpu in range(-1, 7)
+    assert args.gpu in range(-1, 8)
     if args.gpu >= 0:
         use_cuda = True
         torch.cuda.set_device(args.gpu)

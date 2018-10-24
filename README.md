@@ -36,7 +36,7 @@ python train_elmo.py --pre_emb --task=
 
 ##### Data:CoNLL03
 
-##### Pretrained Embedding:Glove
+##### Pretrained Embedding:[glove.6B.100d.txt](https://nlp.stanford.edu/projects/glove/).
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
@@ -50,13 +50,14 @@ python train_elmo.py --pre_emb --task=
 
 ##### Data:CoNLL00
 
-##### Pretrained Embedding:Glove
+##### Pretrained Embedding:[glove.6B.100d.txt](https://nlp.stanford.edu/projects/glove/).
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
 | CharLSTM+LSTM+CRF        | 95.18% | 94.77% | 44/55 |
 | Elmo+LSTM+CRF            | 97.08% | 96.27% | 21/32 |
 | Parser+CharLSTM+LSTM+CRF | 96.48% | 96.42% | 26/37 |
+| Parser+Elmo+LSTM+CRF     | 96.93% | 96.59% | 17/28 |
 
 
 
@@ -64,11 +65,12 @@ python train_elmo.py --pre_emb --task=
 
 ##### Data:WSJ
 
-##### Pretrained Embedding:Glove
+##### Pretrained Embedding:[glove.6B.100d.txt](https://nlp.stanford.edu/projects/glove/).
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
 | CharLSTM+LSTM+CRF        | 97.71% | 97.67% | 10/21 |
 | Elmo+LSTM+CRF            | 97.88% | 97.76% | 7/18  |
 | Parser+ChatLSTM+LSTM+CRF | 97.91% | 97.70% | 6/17  |
+| Parser+Elmo+LSTM+CRF     | 97.94% | 97.76% | 2/13  |
 
