@@ -13,7 +13,7 @@ class Char_LSTM_CRF_Config(Config):
     word_hidden = 300
     char_hidden = 300
     layers = 1
-    dropout = 0.55
+    dropout = 0.5
     char_dim = 30
     word_dim = 100
 
@@ -40,7 +40,7 @@ class Elmo_LSTM_CRF_Config(Config):
     word_hidden = 300
     char_hidden = 300
     layers = 1
-    dropout = 0.55
+    dropout = 0.5
     elmo_dim = 1024
     elmo_layers = 3
     char_dim = 30
@@ -69,7 +69,7 @@ class Parser_Char_LSTM_CRF_Config(Config):
     word_hidden = 300
     char_hidden = 300
     layers = 1
-    dropout = 0.55
+    dropout = 0.5
     parser_dim = 800
     parser_layers = 3
     char_dim = 30
@@ -101,7 +101,7 @@ class Parser_Elmo_LSTM_CRF_Config(Config):
     word_hidden = 300
     char_hidden = 300
     layers = 1
-    dropout = 0.55
+    dropout = 0.5
     elmo_dim = 1024
     elmo_layers = 3
     parser_dim = 800

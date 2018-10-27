@@ -15,8 +15,9 @@ class Parser_Elmo_LSTM_CRF(torch.nn.Module):
         self.embedding_dim = word_dim
         self.drop1 = torch.nn.Dropout(drop)
         self.embedding = torch.nn.Embedding(n_word, word_dim, padding_idx=0)
-        self.elmo_scalarmix = ScalarMix(elmo_layers, elmo_dim, False)
-        self.parser_scalarmix = ScalarMix(parser_dim, parser_layers, False)
+        # self.elmo_scalarmix = ScalarMix(elmo_dim, elmo_layers, False)
+        # self.parser_scalarmix = ScalarMix(parser_dim, parser_layers, False)
+        self.scalar_mix = ScalarMix(parser_dim+elmo_dim, 3, False)
 
         if n_layers > 1:
             self.lstm_layer = torch.nn.LSTM(
@@ -56,13 +57,16 @@ class Parser_Elmo_LSTM_CRF(torch.nn.Module):
         mask = word_idxs.gt(0)
         sen_lens = mask.sum(1)
 
-        elmo_feature = torch.split(elmos, 1, dim=2)
-        elmo_feature = self.elmo_scalarmix(elmo_feature)
-        parser_feature = torch.split(parser, 1, dim=2)
-        parser_feature = self.parser_scalarmix(parser_feature)
-
+        # elmo_feature = torch.split(elmos, 1, dim=2)
+        # elmo_feature = self.elmo_scalarmix(elmo_feature)
+        # parser_feature = torch.split(parser, 1, dim=2)
+        # parser_feature = self.parser_scalarmix(parser_feature)
+        # feature = self.drop1(torch.cat((word_vec, elmo_feature, parser_feature), -1))
+        ext_feature = torch.cat((elmos, parser), -1)
+        ext_feature = torch.split(ext_feature, 1, dim=2)
+        ext_feature = self.scalar_mix(ext_feature)
         word_vec = self.embedding(word_idxs)
-        feature = self.drop1(torch.cat((word_vec, elmo_feature, parser_feature), -1))
+        feature = self.drop1(torch.cat((word_vec, ext_feature), -1))
 
         sorted_lens, sorted_idx = torch.sort(sen_lens, dim=0, descending=True)
         reverse_idx = torch.sort(sorted_idx, dim=0)[1]

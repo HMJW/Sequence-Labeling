@@ -1,4 +1,4 @@
-# POS Tagging for Chinese
+# 	POS Tagging for Chinese
 
 Model : CharLSTM + LSTM + CRF
 ​              Elmo + LSTM + CRF
@@ -54,10 +54,10 @@ python train_elmo.py --pre_emb --task=
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
-| CharLSTM+LSTM+CRF        | 95.18% | 94.77% | 44/55 |
-| Elmo+LSTM+CRF            | 97.08% | 96.27% | 21/32 |
-| Parser+CharLSTM+LSTM+CRF | 96.48% | 96.42% | 26/37 |
-| Parser+Elmo+LSTM+CRF     | 96.93% | 96.59% | 17/28 |
+| CharLSTM+LSTM+CRF        | 95.06% | 94.53% | 18/29 |
+| Elmo+LSTM+CRF            | 97.02% | 96.31% | 37/48 |
+| Parser+CharLSTM+LSTM+CRF | 96.36% | 96.28% | 21/10 |
+| Parser+Elmo+LSTM+CRF     | 97.08% | 96.53% | 29/40 |
 
 
 
@@ -74,3 +74,4 @@ python train_elmo.py --pre_emb --task=
 | Parser+ChatLSTM+LSTM+CRF | 97.91% | 97.70% | 6/17  |
 | Parser+Elmo+LSTM+CRF     | 97.94% | 97.76% | 2/13  |
 
+​	

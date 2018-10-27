@@ -95,9 +95,9 @@ if __name__ == '__main__':
 
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, train_elmo, lower=args.lower, max_word_len=30)
-    dev_data = process_data(vocab, dev, dev_elmo, lower=args.lower, max_word_len=30)
-    test_data = process_data(vocab, test, test_elmo, lower=args.lower, max_word_len=30)
+    train_data = process_data(vocab, train, train_elmo, lower=args.lower)
+    dev_data = process_data(vocab, dev, dev_elmo, lower=args.lower)
+    test_data = process_data(vocab, test, test_elmo, lower=args.lower)
 
     train_loader = Data.DataLoader(
         dataset=train_data,
