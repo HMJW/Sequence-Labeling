@@ -1,4 +1,5 @@
 import collections
+import pickle
 from itertools import chain
 
 import torch
@@ -6,17 +7,6 @@ import torch.nn.init as init
 
 
 class Vocab(object):
-    def collect(self, corpus, min_freq=1):
-        labels = sorted(set(chain(*corpus.label_seqs)))
-        words = list(chain(*corpus.word_seqs))
-        
-        chars_freq = collections.Counter(''.join(words))
-        chars = [c for c,f in chars_freq.items() if f > min_freq]
-        words_freq = collections.Counter(words)
-        words = [w for w,f in words_freq.items() if f> min_freq]
-       
-        return words, chars, labels
-
     def __init__(self, corpus, lower=False, min_freq=1):
         words, chars, labels = self.collect(corpus, min_freq)
 
@@ -34,15 +24,18 @@ class Vocab(object):
         self._word2id = {w: i for i, w in enumerate(self._words)}
         self._char2id = {c: i for i, c in enumerate(self._chars)}
         self._label2id = {l: i for i, l in enumerate(self._labels)}
-
-        self.num_words = len(self._words)
-        self.num_chars = len(self._chars)
-        self.num_labels = len(self._labels)
-
-        self.UNK_word_index = self._word2id[self.UNK]
-        self.UNK_char_index = self._char2id[self.UNK]
-        self.PAD_word_index = self._word2id[self.PAD]
-        self.PAD_char_index = self._char2id[self.PAD]
+        
+    @staticmethod
+    def collect(corpus, min_freq=1):
+        labels = sorted(set(chain(*corpus.label_seqs)))
+        words = sorted(chain(*corpus.word_seqs))
+        
+        chars_freq = collections.Counter(''.join(words))
+        chars = [c for c,f in chars_freq.items() if f >= min_freq]
+        words_freq = collections.Counter(words)
+        words = [w for w,f in words_freq.items() if f>= min_freq]
+       
+        return words, chars, labels
 
     def read_embedding(self, embedding_file, unk_in_pretrain='unk'):
         #  ensure the <PAD> index is 0
@@ -71,14 +64,6 @@ class Vocab(object):
         # update the words,chars dictionary
         self._word2id = {w: i for i, w in enumerate(self._words)}
         self._char2id = {c: i for i, c in enumerate(self._chars)}
-        self.UNK_word_index = self._word2id[self.UNK]
-        self.UNK_char_index = self._char2id[self.UNK]
-        self.PAD_word_index = self._word2id[self.PAD]
-        self.PAD_char_index = self._char2id[self.PAD]
-        
-        # update the numbers of words and chars
-        self.num_words = len(self._words)
-        self.num_chars = len(self._chars)
 
         # initial the extended embedding table
         embdim = len(vectors[0])
@@ -94,6 +79,39 @@ class Vocab(object):
             elif w.lower() in pretrained:
                 extended_embed[i] = pretrained[w.lower()]
         return extended_embed
+
+    @property
+    def num_words(self):
+        return len(self._words)
+
+    @property
+    def num_labels(self):
+        return len(self._labels)
+
+    @property
+    def num_chars(self):
+        return len(self._chars)
+    
+    @property
+    def UNK_word_index(self):
+        return self._word2id[self.UNK]
+
+    @property
+    def UNK_char_index(self):
+        return self._char2id[self.UNK]
+
+    def save(self, filename):
+        with open(filename, 'wb') as f:
+            pickle.dump(self, f)
+    
+    @staticmethod
+    def load(filename):
+        with open(filename, 'rb') as f:
+            obj = pickle.load(f)
+        return obj
+
+    def __repr__(self):
+        return 'Words : %d，Characters : %d，labels : %d' % (self.num_words, self.num_chars, self.num_labels)
 
     def word2id(self, word, lower=False):
         def f(x):

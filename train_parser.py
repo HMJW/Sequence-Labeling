@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser.add_argument('--gpu', type=int, default=config.gpu, help='gpu id, set to -1 if use cpu mode')
     parser.add_argument('--pre_emb', action='store_true', help='choose if use pretrain embedding')
     parser.add_argument('--task', choices=['pos', 'chunking', 'ner'], default='chunking', help='task choice')
-    parser.add_argument('--seed', type=int, default=10, help='random seed')
+    parser.add_argument('--seed', type=int, default=1, help='random seed')
     parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
     parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
     args = parser.parse_args()
@@ -66,18 +66,18 @@ if __name__ == '__main__':
     train = Corpus(config.train_file[args.task], ignore_docstart=False)
     dev = Corpus(config.dev_file[args.task], ignore_docstart=False)
     test = Corpus(config.test_file[args.task], ignore_docstart=False)
-    
+    print(train, '\n', dev, '\n', test)
+
     # collect all words, characters and labels in trainning data
     # remove words whose frequency <= 1
-    vocab = Vocab(train, min_freq=1)
+    vocab = Vocab(train, min_freq=2)
 
     # choose if use pretrained word embedding
     if args.pre_emb and config.embedding_file !=None:
         print('loading pretrained embedding...')
         pre_embedding = vocab.read_embedding(config.embedding_file)
-    print('Words : %d，Characters : %d，labels : %d' %
-          (vocab.num_words, vocab.num_chars, vocab.num_labels))
-    save_pkl(vocab, config.vocab_file)
+    print(vocab)
+    vocab.save(config.vocab_file)
 
     # load parser featuer 
     print('loading parser feature...')

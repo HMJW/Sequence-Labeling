@@ -54,10 +54,10 @@ python train_elmo.py --pre_emb --task=
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
-| CharLSTM+LSTM+CRF        | 95.06% | 94.53% | 18/29 |
-| Elmo+LSTM+CRF            | 97.02% | 96.31% | 37/48 |
-| Parser+CharLSTM+LSTM+CRF | 96.36% | 96.28% | 21/10 |
-| Parser+Elmo+LSTM+CRF     | 97.08% | 96.53% | 29/40 |
+| CharLSTM+LSTM+CRF        | 94.99% | 94.38% | 18/29 |
+| Elmo+LSTM+CRF            | 97.13% | 96.37% | 23/34 |
+| Parser+CharLSTM+LSTM+CRF | 96.41% | 96.48% | 10/21 |
+| Parser+Elmo+LSTM+CRF     | 96.98% | 96.59% | 12/23 |
 
 
 
@@ -69,9 +69,9 @@ python train_elmo.py --pre_emb --task=
 
 | model                    | dev    | test   | Iter  |
 | ------------------------ | ------ | ------ | ----- |
-| CharLSTM+LSTM+CRF        | 97.71% | 97.67% | 10/21 |
-| Elmo+LSTM+CRF            | 97.88% | 97.76% | 7/18  |
-| Parser+ChatLSTM+LSTM+CRF | 97.91% | 97.70% | 6/17  |
-| Parser+Elmo+LSTM+CRF     | 97.94% | 97.76% | 2/13  |
+| CharLSTM+LSTM+CRF        | 97.67% | 97.67% | 10/21 |
+| Elmo+LSTM+CRF            | 97.89% | 97.78% | 3/14  |
+| Parser+ChatLSTM+LSTM+CRF | 97.89% | 97.70% | 6/17  |
+| Parser+Elmo+LSTM+CRF     | 97.92% | 97.78% | 2/13  |
 
 ​	
