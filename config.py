@@ -162,7 +162,7 @@ class Mix_Extra_Char_LSTM_CRF_Config(Config):
     test_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
                     'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
-    net_file = './save/mix_extra_lstm_crf.pt'
+    net_file = './save/mix_extra_char_lstm_crf.pt'
     vocab_file = './save/vocab.pkl'
 
     word_hidden = 300
