@@ -7,19 +7,20 @@ from torch.nn.utils.rnn import *
 from module import *
 
 
-class Elmo_LSTM_CRF(torch.nn.Module):
-    def __init__(self, mixsize, elmo_dim, n_word, word_dim,
-                 n_layers, word_hidden, n_target, drop=0.5):
-        super(Elmo_LSTM_CRF, self).__init__()
-        self.embedding_dim = word_dim
+class Mix_Extra_LSTM_CRF(torch.nn.Module):
+    def __init__(self, extra1_layers, extra1_dim, extra2_layers, extra2_dim, n_word, word_dim,
+                    n_layers, word_hidden, n_target, drop=0.5):
+        super(Mix_Extra_LSTM_CRF, self).__init__()
 
+        self.embedding_dim = word_dim
         self.drop1 = torch.nn.Dropout(drop)
         self.embedding = torch.nn.Embedding(n_word, word_dim, padding_idx=0)
-        self.scalarmix = ScalarMix(elmo_dim, mixsize, False)
-    
+        self.extra1_scalarmix = ScalarMix(extra1_dim, extra1_layers, False)
+        self.extra2_scalarmix = ScalarMix(extra2_dim, extra2_layers, False)
+
         if n_layers > 1:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + elmo_dim,
+                input_size=self.embedding_dim + extra1_dim + extra2_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -28,7 +29,7 @@ class Elmo_LSTM_CRF(torch.nn.Module):
             )
         else:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + elmo_dim,
+                input_size=self.embedding_dim + extra1_dim + extra2_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -39,27 +40,29 @@ class Elmo_LSTM_CRF(torch.nn.Module):
         self.crf = CRFlayer(n_target)
 
         self.reset_parameters()
-    
-    def reset_parameters(self):
-        nn.init.xavier_uniform_(self.out.weight)
-        nn.init.xavier_uniform_(self.hidden.weight)
-        bias = (6.0 / self.embedding.weight.size(1)) ** 0.5
-        nn.init.uniform_(self.embedding.weight, -bias, bias)
 
     def load_pretrained_embedding(self, pre_embeddings):
         assert (pre_embeddings.size()[1] == self.embedding_dim)
         self.embedding.weight = nn.Parameter(pre_embeddings)
 
-    def forward(self, word_idxs, elmos):
+    def reset_parameters(self):
+        init.xavier_uniform_(self.out.weight)
+        init.xavier_uniform_(self.hidden.weight)
+        bias = (3.0 / self.embedding.weight.size(1)) ** 0.5
+        init.uniform_(self.embedding.weight, -bias, bias)
+
+    def forward(self, word_idxs, extras1, extras2):
         # mask = torch.arange(x.size()[1]) < lens.unsqueeze(-1)
         mask = word_idxs.gt(0)
         sen_lens = mask.sum(1)
-        
-        elmo_feature = torch.split(elmos, 1, dim=2)
-        elmo_feature = self.scalarmix(elmo_feature)
-        
+
         word_vec = self.embedding(word_idxs)
-        feature = self.drop1(torch.cat((word_vec, elmo_feature), -1))
+        extra1_feature = torch.split(extras1, 1, dim=2)
+        extra1_feature = self.extra1_scalarmix(extra1_feature)
+        
+        extra2_feature = torch.split(extras2, 1, dim=2)
+        extra2_feature = self.extra2_scalarmix(extra2_feature)
+        feature = self.drop1(torch.cat((word_vec, extra1_feature, extra2_feature), -1))
 
         sorted_lens, sorted_idx = torch.sort(sen_lens, dim=0, descending=True)
         reverse_idx = torch.sort(sorted_idx, dim=0)[1]
@@ -74,9 +77,9 @@ class Elmo_LSTM_CRF(torch.nn.Module):
         return out
 
     def forward_batch(self, batch):
-        word_idxs, elmos, label_idxs = batch
+        word_idxs, extras1, extras2, label_idxs = batch
         mask = word_idxs.gt(0)
-        out = self.forward(word_idxs, elmos)
+        out = self.forward(word_idxs, extras1, extras2)
         return mask, out, label_idxs
 
     def get_loss(self, emit, labels, mask):

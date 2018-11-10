@@ -58,6 +58,8 @@ python train_elmo.py --pre_emb --task=
 | Elmo+LSTM+CRF            | 97.13% | 96.37% | 23/34 |
 | Parser+CharLSTM+LSTM+CRF | 96.41% | 96.48% | 10/21 |
 | Parser+Elmo+LSTM+CRF     | 96.98% | 96.59% | 12/23 |
+| Bert+CharLSTM+LSTM+CRF   |        |        |       |
+| Bert+Elmo+CRF            |        |        |       |
 
 
 

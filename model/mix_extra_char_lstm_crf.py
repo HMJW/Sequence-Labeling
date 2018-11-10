@@ -7,21 +7,21 @@ from torch.nn.utils.rnn import *
 from module import *
 
 
-class Parser_Elmo_LSTM_CRF(torch.nn.Module):
-    def __init__(self, elmo_layers, elmo_dim, parser_layers, parser_dim, n_word, word_dim,
-                    n_layers, word_hidden, n_target, drop=0.5):
-        super(Parser_Elmo_LSTM_CRF, self).__init__()
+class Mix_Extra_Char_LSTM_CRF(torch.nn.Module):
+    def __init__(self, extra1_layers, extra1_dim, extra2_layers, extra2_dim, n_char, char_dim, char_hidden,
+                n_word, word_dim, n_layers, word_hidden, n_target, drop=0.5):
+        super(Mix_Extra_Char_LSTM_CRF, self).__init__()
 
         self.embedding_dim = word_dim
         self.drop1 = torch.nn.Dropout(drop)
         self.embedding = torch.nn.Embedding(n_word, word_dim, padding_idx=0)
-        # self.elmo_scalarmix = ScalarMix(elmo_dim, elmo_layers, False)
-        # self.parser_scalarmix = ScalarMix(parser_dim, parser_layers, False)
-        self.scalar_mix = ScalarMix(parser_dim+elmo_dim, 3, False)
+        self.char_lstm = CharLSTM(n_char, char_dim, char_hidden)
+        self.extra1_scalarmix = ScalarMix(extra1_dim, extra1_layers, False)
+        self.extra2_scalarmix = ScalarMix(extra2_dim, extra2_layers, False)
 
         if n_layers > 1:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + elmo_dim + parser_dim,
+                input_size=self.embedding_dim + char_hidden + extra1_dim + extra2_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -30,7 +30,7 @@ class Parser_Elmo_LSTM_CRF(torch.nn.Module):
             )
         else:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + elmo_dim + parser_dim,
+                input_size=self.embedding_dim + char_hidden + extra1_dim + extra2_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -52,21 +52,21 @@ class Parser_Elmo_LSTM_CRF(torch.nn.Module):
         bias = (3.0 / self.embedding.weight.size(1)) ** 0.5
         init.uniform_(self.embedding.weight, -bias, bias)
 
-    def forward(self, word_idxs, elmos, parser):
+    def forward(self, word_idxs, char_idxs, extras1, extras2):
         # mask = torch.arange(x.size()[1]) < lens.unsqueeze(-1)
         mask = word_idxs.gt(0)
         sen_lens = mask.sum(1)
 
-        # elmo_feature = torch.split(elmos, 1, dim=2)
-        # elmo_feature = self.elmo_scalarmix(elmo_feature)
-        # parser_feature = torch.split(parser, 1, dim=2)
-        # parser_feature = self.parser_scalarmix(parser_feature)
-        # feature = self.drop1(torch.cat((word_vec, elmo_feature, parser_feature), -1))
-        ext_feature = torch.cat((elmos, parser), -1)
-        ext_feature = torch.split(ext_feature, 1, dim=2)
-        ext_feature = self.scalar_mix(ext_feature)
         word_vec = self.embedding(word_idxs)
-        feature = self.drop1(torch.cat((word_vec, ext_feature), -1))
+        char_vec = self.char_lstm.forward(char_idxs[mask])
+        char_vec = pad_sequence(torch.split(char_vec, sen_lens.tolist()), True, padding_value=0)
+
+        extra1_feature = torch.split(extras1, 1, dim=2)
+        extra1_feature = self.extra1_scalarmix(extra1_feature)
+        
+        extra2_feature = torch.split(extras2, 1, dim=2)
+        extra2_feature = self.extra2_scalarmix(extra2_feature)
+        feature = self.drop1(torch.cat((word_vec, char_vec, extra1_feature, extra2_feature), -1))
 
         sorted_lens, sorted_idx = torch.sort(sen_lens, dim=0, descending=True)
         reverse_idx = torch.sort(sorted_idx, dim=0)[1]
@@ -81,9 +81,9 @@ class Parser_Elmo_LSTM_CRF(torch.nn.Module):
         return out
 
     def forward_batch(self, batch):
-        word_idxs, elmos, parsers, label_idxs = batch
+        word_idxs, char_idxs, extras1, extras2, label_idxs = batch
         mask = word_idxs.gt(0)
-        out = self.forward(word_idxs, elmos, parsers)
+        out = self.forward(word_idxs, char_idxs, extras1, extras2)
         return mask, out, label_idxs
 
     def get_loss(self, emit, labels, mask):

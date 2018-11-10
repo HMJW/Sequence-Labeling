@@ -4,27 +4,30 @@ import torch
 import torch.utils.data as Data
 
 from config import config
-from model import Elmo_LSTM_CRF
+from model import Mix_Extra_Char_LSTM_CRF
 from utils import *
 
 
-def process_data(vocab, dataset, elmo, lower=False):
-    word_idxs, elmos, label_idxs= [], [], []
+def process_data(vocab, dataset, extra1, extra2, extra1_layers, extra2_layers, lower=False, max_word_len=20):
+    word_idxs, char_idxs, extras1, extras2, label_idxs= [], [], [], [], []
 
-    for wordseq, labelseq, e in zip(dataset.word_seqs, dataset.label_seqs, elmo):
+    for wordseq, labelseq, e1 ,e2 in zip(dataset.word_seqs, dataset.label_seqs, extra1, extra2):
         _word_idxs = vocab.word2id(wordseq, lower)
         _label_idxs = vocab.label2id(labelseq)
+        _char_idxs = vocab.char2id(wordseq, max_word_len)
 
         word_idxs.append(torch.tensor(_word_idxs))
+        char_idxs.append(torch.tensor(_char_idxs))
         label_idxs.append(torch.tensor(_label_idxs))
-        elmos.append(e)
-
-    return TensorDataSet(word_idxs, elmos, label_idxs)
+        extras1.append(torch.tensor(e1, dtype=torch.float)[:,:extra1_layers])
+        extras2.append(torch.tensor(e2, dtype=torch.float)[:,:extra2_layers])
+ 
+    return TensorDataSet(word_idxs, char_idxs, extras1, extras2, label_idxs)
 
 
 if __name__ == '__main__':
     # init config
-    model_name = 'elmo_lstm_crf'
+    model_name = 'mix_extra_char_lstm_crf'
     config = config[model_name]
     for name, value in vars(config).items():
         print('%s = %s' %(name, str(value)))
@@ -36,6 +39,8 @@ if __name__ == '__main__':
     parser.add_argument('--seed', type=int, default=1, help='random seed')
     parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
     parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
+    parser.add_argument('--extra1', choices=['elmo', 'parser', 'bert'], default='elmo', help='choose extra feature1')
+    parser.add_argument('--extra2', choices=['elmo', 'parser', 'bert'], default='parser', help='choose extra feature2')
     args = parser.parse_args()
     print('setting:')
     print(args)
@@ -76,17 +81,23 @@ if __name__ == '__main__':
     print(vocab)
     vocab.save(config.vocab_file)
 
-    # load Elmo    
-    print('loading Elmo...')
-    train_elmo = read_elmo(config.train_elmo[args.task], config.elmo_layers)
-    dev_elmo = read_elmo(config.dev_elmo[args.task], config.elmo_layers)
-    test_elmo = read_elmo(config.test_elmo[args.task], config.elmo_layers)
+    # load extra features 1 
+    print('loading extra feature:%s...' % (args.extra1))
+    train_extra1 = load_extra(config.train_extra1[args.task][args.extra1], args.extra1)
+    dev_extra1 = load_extra(config.dev_extra1[args.task][args.extra1], args.extra1)
+    test_extra1 = load_extra(config.test_extra1[args.task][args.extra1], args.extra1)
 
+    # load extra features 2
+    print('loading extra feature:%s...' % (args.extra2))
+    train_extra2 = load_extra(config.train_extra2[args.task][args.extra2], args.extra2)
+    dev_extra2 = load_extra(config.dev_extra2[args.task][args.extra2], args.extra2)
+    test_extra2 = load_extra(config.test_extra2[args.task][args.extra2], args.extra2)
+    
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, train_elmo, lower=args.lower)
-    dev_data = process_data(vocab, dev, dev_elmo, lower=args.lower)
-    test_data = process_data(vocab, test, test_elmo, lower=args.lower)
+    train_data = process_data(vocab, train, train_extra1, train_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
+    dev_data = process_data(vocab, dev, dev_extra1, dev_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
+    test_data = process_data(vocab, test, test_extra1, test_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
 
     train_loader = Data.DataLoader(
         dataset=train_data,
@@ -108,10 +119,15 @@ if __name__ == '__main__':
     )
 
     # create neural network
-    net = Elmo_LSTM_CRF(config.elmo_layers, 
-                        config.elmo_dim, 
-                        vocab.num_words, 
-                        config.word_dim, 
+    net = Mix_Extra_Char_LSTM_CRF(config.extra1_layers, 
+                        config.extra1_dim,
+                        config.extra2_layers,
+                        config.extra2_dim,
+                        vocab.num_chars, 
+                        config.char_dim, 
+                        config.char_hidden, 
+                        vocab.num_words,
+                        config.word_dim,
                         config.layers, 
                         config.word_hidden, 
                         vocab.num_labels, 

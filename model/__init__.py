@@ -1,6 +1,7 @@
 from .char_lstm_crf import Char_LSTM_CRF
-from .elmo_lstm_crf import Elmo_LSTM_CRF
-from .parser_char_lstm_crf import Parser_Char_LSTM_CRF
-from .parser_elmo_lstm_crf import Parser_Elmo_LSTM_CRF
+from .extra_lstm_crf import Extra_LSTM_CRF
+from .extra_char_lstm_crf import Extra_Char_LSTM_CRF
+from .mix_extra_lstm_crf import Mix_Extra_LSTM_CRF
+from .mix_extra_char_lstm_crf import Mix_Extra_Char_LSTM_CRF
 
-__all__ = ('Char_LSTM_CRF', 'Elmo_LSTM_CRF', 'Parser_Char_LSTM_CRF', 'Parser_Elmo_LSTM_CRF')
+__all__ = ('Char_LSTM_CRF', 'Extra_LSTM_CRF', 'Extra_Char_LSTM_CRF', 'Mix_Extra_LSTM_CRF', 'Mix_Extra_Char_LSTM_CRF')

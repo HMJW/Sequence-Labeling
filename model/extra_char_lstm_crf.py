@@ -7,20 +7,20 @@ from torch.nn.utils.rnn import *
 from module import *
 
 
-class Parser_Char_LSTM_CRF(torch.nn.Module):
-    def __init__(self, parser_layers, parser_dim, n_char, char_dim, char_hidden, n_word, word_dim,
+class Extra_Char_LSTM_CRF(torch.nn.Module):
+    def __init__(self, extra_layers, extra_dim, n_char, char_dim, char_hidden, n_word, word_dim,
                  n_layers, word_hidden, n_target, drop=0.5):
-        super(Parser_Char_LSTM_CRF, self).__init__()
+        super(Extra_Char_LSTM_CRF, self).__init__()
 
         self.embedding_dim = word_dim
         self.drop1 = torch.nn.Dropout(drop)
         self.embedding = torch.nn.Embedding(n_word, word_dim, padding_idx=0)
-        self.scalarmix = ScalarMix(parser_dim, parser_layers, False)
+        self.scalarmix = ScalarMix(extra_dim, extra_layers, False)
         self.char_lstm = CharLSTM(n_char, char_dim, char_hidden)
 
         if n_layers > 1:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + char_hidden + parser_dim,
+                input_size=self.embedding_dim + char_hidden + extra_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -29,7 +29,7 @@ class Parser_Char_LSTM_CRF(torch.nn.Module):
             )
         else:
             self.lstm_layer = torch.nn.LSTM(
-                input_size=self.embedding_dim + char_hidden + parser_dim,
+                input_size=self.embedding_dim + char_hidden + extra_dim,
                 hidden_size=word_hidden//2,
                 batch_first=True,
                 bidirectional=True,
@@ -51,19 +51,19 @@ class Parser_Char_LSTM_CRF(torch.nn.Module):
         bias = (3.0 / self.embedding.weight.size(1)) ** 0.5
         init.uniform_(self.embedding.weight, -bias, bias)
 
-    def forward(self, word_idxs, char_idxs, parser):
+    def forward(self, word_idxs, char_idxs, extra):
         # mask = torch.arange(x.size()[1]) < lens.unsqueeze(-1)
         mask = word_idxs.gt(0)
         sen_lens = mask.sum(1)
 
-        parser_feature = torch.split(parser, 1, dim=2)
-        parser_feature = self.scalarmix(parser_feature)
+        extra_feature = torch.split(extra, 1, dim=2)
+        extra_feature = self.scalarmix(extra_feature)
 
         char_vec = self.char_lstm.forward(char_idxs[mask])
         char_vec = pad_sequence(torch.split(char_vec, sen_lens.tolist()), True, padding_value=0)
 
         word_vec = self.embedding(word_idxs)
-        feature = self.drop1(torch.cat((word_vec, char_vec, parser_feature), -1))
+        feature = self.drop1(torch.cat((word_vec, char_vec, extra_feature), -1))
 
         sorted_lens, sorted_idx = torch.sort(sen_lens, dim=0, descending=True)
         reverse_idx = torch.sort(sorted_idx, dim=0)[1]
@@ -78,9 +78,9 @@ class Parser_Char_LSTM_CRF(torch.nn.Module):
         return out
 
     def forward_batch(self, batch):
-        word_idxs, char_idxs, parsers, label_idxs = batch
+        word_idxs, char_idxs, extras, label_idxs = batch
         mask = word_idxs.gt(0)
-        out = self.forward(word_idxs, char_idxs, parsers)
+        out = self.forward(word_idxs, char_idxs, extras)
         return mask, out, label_idxs
 
     def get_loss(self, emit, labels, mask):
