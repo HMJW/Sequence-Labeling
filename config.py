@@ -46,8 +46,8 @@ class Extra_LSTM_CRF_Config(Config):
     word_hidden = 300
     layers = 1
     dropout = 0.5
-    extra_dim = 1024    # elmo:1024 parser:800 bert=768
-    extra_layers = 3    # elmo:3    parser:3   bert=4
+    extra_dim = {'elmo':1024,'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
     word_dim = 100
 
     optimizer = 'adam'
@@ -81,8 +81,8 @@ class Extra_Char_LSTM_CRF_Config(Config):
     char_hidden = 300
     layers = 1
     dropout = 0.5
-    extra_dim = 800     # elmo:1024 parser:800 bert=768
-    extra_layers = 3    # elmo:3    parser:3   bert=4
+    extra_dim = {'elmo':1024, 'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
     char_dim = 30
     word_dim = 100
 
@@ -124,10 +124,10 @@ class Mix_Extra_LSTM_CRF_Config(Config):
     word_hidden = 300
     layers = 1
     dropout = 0.5
-    extra1_dim = 1024
-    extra1_layers = 3
-    extra2_dim = 800
-    extra2_layers = 3
+    extra1_dim = {'elmo':1024, 'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra1_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
+    extra2_dim = {'elmo':1024, 'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra2_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
     word_dim = 100
 
     optimizer = 'adam'
@@ -169,10 +169,10 @@ class Mix_Extra_Char_LSTM_CRF_Config(Config):
     char_hidden = 300
     layers = 1
     dropout = 0.5
-    extra1_dim = 1024
-    extra1_layers = 3
-    extra2_dim = 800
-    extra2_layers = 3
+    extra1_dim = {'elmo':1024, 'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra1_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
+    extra2_dim = {'elmo':1024, 'parser':800, 'bert':768}    # elmo:1024 parser:800 bert=768
+    extra2_layers = {'elmo':3, 'parser':3, 'bert':4}        # elmo:3    parser:3   bert=4
     word_dim = 100
     char_dim = 30
 

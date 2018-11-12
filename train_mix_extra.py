@@ -93,9 +93,9 @@ if __name__ == '__main__':
     
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, train_extra1, train_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
-    dev_data = process_data(vocab, dev, dev_extra1, dev_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
-    test_data = process_data(vocab, test, test_extra1, test_extra2, config.extra1_layers, config.extra2_layers, lower=args.lower)
+    train_data = process_data(vocab, train, train_extra1, train_extra2, config.extra1_layers[args.extra1], config.extra2_layers[args.extra2], lower=args.lower)
+    dev_data = process_data(vocab, dev, dev_extra1, dev_extra2, config.extra1_layers[args.extra1], config.extra2_layers[args.extra2], lower=args.lower)
+    test_data = process_data(vocab, test, test_extra1, test_extra2, config.extra1_layers[args.extra1], config.extra2_layers[args.extra2], lower=args.lower)
 
     train_loader = Data.DataLoader(
         dataset=train_data,
@@ -117,10 +117,10 @@ if __name__ == '__main__':
     )
 
     # create neural network
-    net = Mix_Extra_LSTM_CRF(config.extra1_layers, 
-                        config.extra1_dim,
-                        config.extra2_layers,
-                        config.extra2_dim,
+    net = Mix_Extra_LSTM_CRF(config.extra1_layers[args.extra1], 
+                        config.extra1_dim[args.extra1],
+                        config.extra2_layers[args.extra2],
+                        config.extra2_dim[args.extra2],
                         vocab.num_words, 
                         config.word_dim, 
                         config.layers, 

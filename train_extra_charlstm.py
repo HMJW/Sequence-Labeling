@@ -87,9 +87,9 @@ if __name__ == '__main__':
     
     # process training data , change string to index
     print('processing datasets...')
-    train_data = process_data(vocab, train, train_extra, config.extra_layers, lower=args.lower, max_word_len=20)
-    dev_data = process_data(vocab, dev, dev_extra, config.extra_layers, lower=args.lower, max_word_len=20)
-    test_data = process_data(vocab, test, test_extra, config.extra_layers, lower=args.lower, max_word_len=20)
+    train_data = process_data(vocab, train, train_extra, config.extra_layers[args.extra], lower=args.lower, max_word_len=20)
+    dev_data = process_data(vocab, dev, dev_extra, config.extra_layers[args.extra], lower=args.lower, max_word_len=20)
+    test_data = process_data(vocab, test, test_extra, config.extra_layers[args.extra], lower=args.lower, max_word_len=20)
 
     train_loader = Data.DataLoader(
         dataset=train_data,
@@ -111,8 +111,8 @@ if __name__ == '__main__':
     )
 
     # create neural network
-    net = Extra_Char_LSTM_CRF(config.extra_layers, 
-                               config.extra_dim, 
+    net = Extra_Char_LSTM_CRF(config.extra_layers[args.extra], 
+                               config.extra_dim[args.extra], 
                                vocab.num_chars, 
                                config.char_dim, 
                                config.char_hidden, 
