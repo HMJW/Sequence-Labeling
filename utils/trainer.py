@@ -92,7 +92,7 @@ class Trainer(object):
                     max_epoch = e + 1
                     patience = 0
                     print('save the model...')
-                    torch.save(self.network.state_dict(), self.config.net_file)
+                    torch.save(self.network, self.config.net_file)
                 else:
                     patience += 1
 

@@ -32,13 +32,13 @@ if __name__ == '__main__':
         print('%s = %s' %(name, str(value)))
         
     parser = argparse.ArgumentParser(description='Training')
-    parser.add_argument('--gpu', type=int, default=config.gpu, help='gpu id, set to -1 if use cpu mode')
+    parser.add_argument('--gpu', type=int, default=-1, help='gpu id, set to -1 if use cpu mode')
     parser.add_argument('--pre_emb', action='store_true', help='choose if use pretrain embedding')
     parser.add_argument('--task', choices=['pos', 'chunking', 'ner'], default='chunking', help='task choice')
     parser.add_argument('--seed', type=int, default=1, help='random seed')
-    parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
+    parser.add_argument('--thread', type=int, default=4, help='thread num')
     parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
-    parser.add_argument('--extra', choices=['elmo', 'parser', 'bert'], default='elmo', help='choose extra feature')
+    parser.add_argument('--extra', choices=['elmo', 'parser', 'bert'], default='bert', help='choose extra feature')
     args = parser.parse_args()
     print('setting:')
     print(args)
@@ -63,9 +63,9 @@ if __name__ == '__main__':
 
     # read training , dev and test file
     print('loading three datasets...')
-    train = Corpus(config.train_file[args.task], ignore_docstart=False)
-    dev = Corpus(config.dev_file[args.task], ignore_docstart=False)
-    test = Corpus(config.test_file[args.task], ignore_docstart=False)
+    train = Corpus(config.train_file[args.task], ignore_docstart=True)
+    dev = Corpus(config.dev_file[args.task], ignore_docstart=True)
+    test = Corpus(config.test_file[args.task], ignore_docstart=True)
     print(train, '\n', dev, '\n', test)
 
     # collect all words, characters and labels in trainning data

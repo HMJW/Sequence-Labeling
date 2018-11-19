@@ -19,11 +19,9 @@ class Char_LSTM_CRF_Config(Config):
 
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
     lr = 0.001
     batch_size = 50
     eval_batch = 100
-    tread_num = 4
     decay = 0.05
     patience = 10
     shuffle = True
@@ -31,14 +29,14 @@ class Char_LSTM_CRF_Config(Config):
 
 class Extra_LSTM_CRF_Config(Config):
     model = 'Extra_LSTM_CRF'
-    train_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
+    train_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
+    dev_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
+    test_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
     net_file = './save/extra_lstm_crf.pt'
     vocab_file = './save/vocab.pkl'
@@ -52,11 +50,9 @@ class Extra_LSTM_CRF_Config(Config):
 
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
     lr = 0.001
     batch_size = 50
     eval_batch = 100
-    tread_num = 4
     decay = 0.05
     patience = 10
     shuffle = True
@@ -65,15 +61,15 @@ class Extra_LSTM_CRF_Config(Config):
 class Extra_Char_LSTM_CRF_Config(Config):
     model = 'Extra_Char_LSTM_CRF'
 
-    train_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
-                    'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
-                    'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
-                    'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
+    train_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
+                    'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/pos/parser/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
+    dev_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
+                    'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/pos/parser/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
+    test_extra = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
+                    'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/pos/parser/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
     net_file = './save/extra_char_lstm_crf.pt'
     vocab_file = './save/vocab.pkl'
 
@@ -88,11 +84,9 @@ class Extra_Char_LSTM_CRF_Config(Config):
 
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
     lr = 0.001
     batch_size = 50
     eval_batch = 100
-    tread_num = 4
     decay = 0.05
     patience = 10
     shuffle = True
@@ -100,23 +94,23 @@ class Extra_Char_LSTM_CRF_Config(Config):
 
 class Mix_Extra_LSTM_CRF_Config(Config):
     model = 'Mix_Extra_LSTM_CRF'
-    train_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
+    train_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
+    dev_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
+    test_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
-    train_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
+    train_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
+    dev_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
+    test_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
     net_file = './save/mix_extra_lstm_crf.pt'
     vocab_file = './save/vocab.pkl'
@@ -132,11 +126,9 @@ class Mix_Extra_LSTM_CRF_Config(Config):
 
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
     lr = 0.001
     batch_size = 50
     eval_batch = 100
-    tread_num = 4
     decay = 0.05
     patience = 10
     shuffle = True
@@ -144,23 +136,23 @@ class Mix_Extra_LSTM_CRF_Config(Config):
 
 class Mix_Extra_Char_LSTM_CRF_Config(Config):
     model = 'Mix_Extra_Char_LSTM_CRF'
-    train_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
+    train_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
+    dev_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
+    test_extra1 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
-    train_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.bert'},
-                    'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.bert'}}
-    dev_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.bert'},
+    train_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/train-elmo.hdf5', 'parser':'../data/en/chunking/parser/train.parser', 'bert':'../data/en/chunking/bert/train.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/parser/train.parser', 'bert':'../data/en/NER/bert/train.uncased'},
+                    'pos': {'elmo':'../data/en/pos/elmo/train-elmo.hdf5', 'parser':'../data/en/NER/pos/train.parser', 'bert':'../data/en/pos/bert/train.uncased-aver'}}
+    dev_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/dev-elmo.hdf5', 'parser':'../data/en/chunking/parser/dev.parser', 'bert':'../data/en/chunking/bert/dev.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/parser/dev.parser', 'bert':'../data/en/NER/bert/dev.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/dev-elmo.hdf5', 'parser':'../data/en/NER/pos/dev.parser', 'bert':'../data/en/pos/bert/dev.bert'}}
-    test_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.bert'},
-                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.bert'},
+    test_extra2 = {'chunking': {'elmo':'../data/en/chunking/elmo/test-elmo.hdf5', 'parser':'../data/en/chunking/parser/test.parser', 'bert':'../data/en/chunking/bert/test.uncased-aver'},
+                    'ner': {'elmo':'../data/en/NER/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/parser/test.parser', 'bert':'../data/en/NER/bert/test.uncased'},
                     'pos': {'elmo':'../data/en/pos/elmo/test-elmo.hdf5', 'parser':'../data/en/NER/pos/test.parser', 'bert':'../data/en/pos/bert/test.bert'}}
     net_file = './save/mix_extra_char_lstm_crf.pt'
     vocab_file = './save/vocab.pkl'
@@ -178,11 +170,9 @@ class Mix_Extra_Char_LSTM_CRF_Config(Config):
 
     optimizer = 'adam'
     epoch = 100
-    gpu = -1
     lr = 0.001
     batch_size = 50
     eval_batch = 100
-    tread_num = 4
     decay = 0.05
     patience = 10
     shuffle = True

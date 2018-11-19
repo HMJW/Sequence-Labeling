@@ -31,11 +31,11 @@ if __name__ == '__main__':
         print('%s = %s' %(name, str(value)))
         
     parser = argparse.ArgumentParser(description='Training')
-    parser.add_argument('--gpu', type=int, default=config.gpu, help='gpu id, set to -1 if use cpu mode')
+    parser.add_argument('--gpu', type=int, default=-1, help='gpu id, set to -1 if use cpu mode')
     parser.add_argument('--pre_emb', action='store_true', help='choose if use pretrain embedding')
     parser.add_argument('--task', choices=['pos', 'chunking', 'ner'], default='chunking', help='task choice')
     parser.add_argument('--seed', type=int, default=1, help='random seed')
-    parser.add_argument('--thread', type=int, default=config.tread_num, help='thread num')
+    parser.add_argument('--thread', type=int, default=4, help='thread num')
     parser.add_argument('--lower', action='store_true', help='choose if lower all the words')
     parser.add_argument('--extra1', choices=['elmo', 'parser', 'bert'], default='elmo', help='choose extra feature1')
     parser.add_argument('--extra2', choices=['elmo', 'parser', 'bert'], default='parser', help='choose extra feature2')

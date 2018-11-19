@@ -22,7 +22,9 @@ def read_elmo(file):
     return result
 
 def load_extra(file, extra):
-    if extra == 'bert' or extra == 'parser':
+    if extra == 'parser':
+        return load_pkl(file)
+    elif extra == 'bert':
         return load_pkl(file)
     elif extra == 'elmo':
         result = []
